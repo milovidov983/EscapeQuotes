@@ -7,7 +7,17 @@ https://github.com/milovidov983/ScreenQuotes
 
 After installing the extension, when you select text and right-click on it, a new *Escape quotes* menu will appear.
 
-### 1.0.0
+### Example
 
-First work version
+Before:
+
+```
+Select * from "Table" where exists(select 1 from jsonb_array_elements("Data"->'users') v where v->'job'->'some'->>'foo'='0')
+```
+
+After:
+
+```
+Select * from \"Table\" where exists(select 1 from jsonb_array_elements(\"Data\"->\'users\') v where v->\'job\'->\'some\'->>\'foo\'=\'0\')
+```
 

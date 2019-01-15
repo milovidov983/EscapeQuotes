@@ -3,13 +3,14 @@
 	"publisher": "milovidov",
 	"displayName": "Escape-quotes",
 	"description": "The extension allows you to escape quotes on the selected line.",
-	"version": "1.0.2",
+	"version": "1.0.4",
 	"engines": {
 		"vscode": "^1.30.0"
 	},
 	"categories": [
-		"Other"
+		"Other", "Formatters"
 	],
+	"icon": "images/icon.png",
 	"activationEvents": [
 		"onCommand:extension.screenQuotes"
 	],
