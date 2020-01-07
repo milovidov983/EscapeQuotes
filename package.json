@@ -8,11 +8,13 @@
 		"vscode": "^1.30.0"
 	},
 	"categories": [
-		"Other", "Formatters"
+		"Other",
+		"Formatters"
 	],
 	"icon": "images/icon.png",
 	"activationEvents": [
-		"onCommand:extension.screenQuotes"
+		"onCommand:extension.screenQuotes",
+		"onCommand:extension.screenUnquotes"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -20,14 +22,24 @@
 			{
 				"command": "extension.screenQuotes",
 				"title": "Escape quotes"
+			},
+			{
+				"command": "extension.screenUnquotes",
+				"title": "Unescape quotes"
 			}
 		],
 		"menus": {
-			"editor/context": [{
-				"command": "extension.screenQuotes",
-				"when": "editorHasSelection",
-				"group": "7_modification"
-			  }
+			"editor/context": [
+				{
+					"command": "extension.screenQuotes",
+					"when": "editorHasSelection",
+					"group": "7_modification"
+				},
+				{
+					"command": "extension.screenUnquotes",
+					"when": "editorHasSelection",
+					"group": "7_modification"
+				}
 			]
 		}
 	},
