@@ -11,62 +11,48 @@ import {
 
 
 export function activate(context: vscode.ExtensionContext) {
+	const setQuotes = (text: string) => [...text].map(c => {
+		if (c == '\"' || c == '\'') {
+			return '\\' + c;
+		}
+		return c;
+	}).join('');
 
+	const getSelectedText = (selection: Selection, doc: TextDocument) => {
+		const startPosition: Position = selection.start;
+		const endPosition: Position = selection.end;
+		const selectedLine: TextLine = doc.lineAt(startPosition.line);
+		return selectedLine.text.substring(startPosition.character, endPosition.character);
+	};
 
-	let screenQuotes = vscode.commands.registerCommand('extension.screenQuotes', () => {
-
-		let textEditor = vscode.window.activeTextEditor;
+	const screenQuotesVScommand = vscode.commands.registerCommand('extension.screenQuotes', () => {
+		const textEditor = vscode.window.activeTextEditor;
 
 		if (textEditor) {
-			let selections: Selection[] = textEditor.selections;
-			let doc: TextDocument = textEditor.document;
+			const selections: Selection[] = textEditor.selections;
+			const doc: TextDocument = textEditor.document;
 
 			textEditor.edit((edit: TextEditorEdit) => {
-				selections.forEach((selection: vscode.Selection) => {
-					const startPosition: Position = selection.start;
-					const endPosition: Position = selection.end;
-					const seletedText: TextLine = doc.lineAt(startPosition.line);
-					const workText = seletedText.text.substring(startPosition.character, endPosition.character);
-
-					let resultLineText = [...workText].map(c => {
-						if (c == '\"' || c == '\'') {
-							return '\\' + c;
-						}
-						return c;
-					}).join('');
+				selections.forEach((selection: Selection) => {
+					const selectedText = getSelectedText(selection, doc);
+					const resultLineText = setQuotes(selectedText);
 
 					edit.replace(selection, resultLineText);
-
-					// for (let i = selection.start.line; i <= selection.end.line; i++) {
-					// 	let selLine: TextLine = doc.lineAt(i);
-					// 	let insertPos: Range = selLine.range;
-					// 	let insertLineText: string = selLine.text;
-
-					// 	let resultLineText = [...insertLineText].map(c => {
-					// 		if (c == '\"' || c == '\'') {
-					// 			return '\\' + c;
-					// 		}
-					// 		return c;
-					// 	}).join('');
-
-					// 	edit.replace(insertPos, resultLineText);
-					// }
 				})
 			});
 		}
 
 	});
 
-	let screenUnquote = vscode.commands.registerCommand('extension.screenUnquotes', () => {
-
-		let textEditor = vscode.window.activeTextEditor;
+	const screenUnquoteVScommand = vscode.commands.registerCommand('extension.screenUnquotes', () => {
+		const textEditor = vscode.window.activeTextEditor;
 
 		if (textEditor) {
-			let selections: vscode.Selection[] = textEditor.selections;
-			let doc: vscode.TextDocument = textEditor.document;
+			const selections: vscode.Selection[] = textEditor.selections;
+			const doc: vscode.TextDocument = textEditor.document;
 
-			textEditor.edit(function (edit: TextEditorEdit): void {
-				selections.forEach((selection: vscode.Selection, index: Number) => {
+			textEditor.edit((edit: TextEditorEdit) => {
+				selections.forEach((selection: Selection) => {
 					for (let i = selection.start.line; i <= selection.end.line; i++) {
 						let selLine: TextLine = doc.lineAt(i);
 						let insertPos: Range = selLine.range;
@@ -109,8 +95,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	});
 
-	context.subscriptions.push(screenQuotes);
-	context.subscriptions.push(screenUnquote);
+	context.subscriptions.push(screenQuotesVScommand);
+	context.subscriptions.push(screenUnquoteVScommand);
 }
 
 // this method is called when your extension is deactivated
