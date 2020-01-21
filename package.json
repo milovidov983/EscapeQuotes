@@ -3,7 +3,7 @@
 	"publisher": "milovidov",
 	"displayName": "Escape-quotes",
 	"description": "The extension allows you to escape quotes on the selected line.",
-	"version": "1.3.2",
+	"version": "1.3.3",
 	"engines": {
 		"vscode": "^1.30.0"
 	},
