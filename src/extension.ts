@@ -11,12 +11,44 @@ import {
 
 
 export function activate(context: vscode.ExtensionContext) {
-	const setQuotes = (text: string) => [...text].map(c => {
+	const getQuotedText = (text: string) => [...text].map(c => {
 		if (c == '\"' || c == '\'') {
 			return '\\' + c;
 		}
 		return c;
 	}).join('');
+
+	const getUnquotedText = (text: string) => {
+		let resultLineText: string = "";
+		for (let i = 0; i < text.length; i++) {
+			if (text[i] == '\\') {
+				switch (text[i + 1]) {
+					case 'n':
+						resultLineText += '\n';
+						break;
+					case 'r':
+						resultLineText += '\r';
+						break;
+					case 't':
+						resultLineText += '\t';
+						break;
+					case '\\':
+						resultLineText += '\\';
+						break;
+					case '"':
+						resultLineText += '"';
+						break;
+					case '\'':
+						resultLineText += '\'';
+						break;
+				}
+				i += 1;
+			} else {
+				resultLineText += text[i];
+			}
+		}
+		return resultLineText;
+	}
 
 	const getSelectedText = (selection: Selection, doc: TextDocument) => {
 		const startPosition: Position = selection.start;
@@ -35,9 +67,9 @@ export function activate(context: vscode.ExtensionContext) {
 			textEditor.edit((edit: TextEditorEdit) => {
 				selections.forEach((selection: Selection) => {
 					const selectedText = getSelectedText(selection, doc);
-					const resultLineText = setQuotes(selectedText);
+					const resultText = getQuotedText(selectedText);
 
-					edit.replace(selection, resultLineText);
+					edit.replace(selection, resultText);
 				})
 			});
 		}
@@ -53,42 +85,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 			textEditor.edit((edit: TextEditorEdit) => {
 				selections.forEach((selection: Selection) => {
-					for (let i = selection.start.line; i <= selection.end.line; i++) {
-						let selLine: TextLine = doc.lineAt(i);
-						let insertPos: Range = selLine.range;
-						let insertLineText: string = selLine.text;
+					const selectedText = getSelectedText(selection, doc);
+					const resultText = getUnquotedText(selectedText);
 
-						let resultLineText: string = "";
-						for (let i = 0; i < insertLineText.length; i++) {
-							if (insertLineText[i] == '\\') {
-								switch (insertLineText[i + 1]) {
-									case 'n':
-										resultLineText += '\n';
-										break;
-									case 'r':
-										resultLineText += '\r';
-										break;
-									case 't':
-										resultLineText += '\t';
-										break;
-									case '\\':
-										resultLineText += '\\';
-										break;
-									case '"':
-										resultLineText += '"';
-										break;
-									case '\'':
-										resultLineText += '\'';
-										break;
-								}
-								i += 1;
-							} else {
-								resultLineText += insertLineText[i];
-							}
-						}
-
-						edit.replace(insertPos, resultLineText);
-					}
+					edit.replace(selection, resultText);
 				})
 			});
 		}
