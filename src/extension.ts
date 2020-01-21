@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import {
 	TextEditorEdit,
 	TextLine,
-	Range,
 	Position,
 	TextDocument,
 	Selection
