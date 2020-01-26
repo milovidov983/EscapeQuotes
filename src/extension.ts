@@ -56,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 		return selectedLine.text.substring(startPosition.character, endPosition.character);
 	};
 
-	const screenQuotesVScommand = vscode.commands.registerCommand('extension.screenQuotes', () => {
+	const setQuotesVScommand = vscode.commands.registerCommand('extension.screenQuotes', () => {
 		const textEditor = vscode.window.activeTextEditor;
 
 		if (textEditor) {
@@ -75,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	});
 
-	const screenUnquoteVScommand = vscode.commands.registerCommand('extension.screenUnquotes', () => {
+	const setUnquoteVScommand = vscode.commands.registerCommand('extension.screenUnquotes', () => {
 		const textEditor = vscode.window.activeTextEditor;
 
 		if (textEditor) {
@@ -94,8 +94,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	});
 
-	context.subscriptions.push(screenQuotesVScommand);
-	context.subscriptions.push(screenUnquoteVScommand);
+	context.subscriptions.push(setQuotesVScommand);
+	context.subscriptions.push(setUnquoteVScommand);
 }
 
 // this method is called when your extension is deactivated
