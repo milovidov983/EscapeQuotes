@@ -2,10 +2,10 @@
 import * as vscode from 'vscode';
 import {
 	TextEditorEdit,
-	TextLine,
 	Position,
 	TextDocument,
-	Selection
+	Selection,
+	Range
 } from 'vscode';
 
 
@@ -52,8 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
 	const getSelectedText = (selection: Selection, doc: TextDocument) => {
 		const startPosition: Position = selection.start;
 		const endPosition: Position = selection.end;
-		const selectedLine: TextLine = doc.lineAt(startPosition.line);
-		return selectedLine.text.substring(startPosition.character, endPosition.character);
+
+		return doc.getText(new Range(startPosition, endPosition));
 	};
 
 	const setQuotesVScommand = vscode.commands.registerCommand('extension.screenQuotes', () => {

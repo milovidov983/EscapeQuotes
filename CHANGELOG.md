@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "escape-quotes" extension will be documented in this file.
 
+## 1.3.4
+- Fixed bug with multiline selections
+
 ## 1.3.2
 - Fixed bug: It always escape the whole line
 
