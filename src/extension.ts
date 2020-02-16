@@ -1,102 +1,44 @@
-
 import * as vscode from 'vscode';
-import {
-	TextEditorEdit,
-	Position,
-	TextDocument,
-	Selection,
-	Range
-} from 'vscode';
-
+import { Commands } from './constants';
+import { getQuotedText as escapeSimpleQuotes, getUnquotedText as unescapeSimpleQuotes } from './utils';
 
 export function activate(context: vscode.ExtensionContext) {
-	const getQuotedText = (text: string) => [...text].map(c => {
-		if (c == '\"' || c == '\'') {
-			return '\\' + c;
-		}
-		return c;
-	}).join('');
 
-	const getUnquotedText = (text: string) => {
-		let resultLineText: string = "";
-		for (let i = 0; i < text.length; i++) {
-			if (text[i] == '\\') {
-				switch (text[i + 1]) {
-					case 'n':
-						resultLineText += '\n';
-						break;
-					case 'r':
-						resultLineText += '\r';
-						break;
-					case 't':
-						resultLineText += '\t';
-						break;
-					case '\\':
-						resultLineText += '\\';
-						break;
-					case '"':
-						resultLineText += '"';
-						break;
-					case '\'':
-						resultLineText += '\'';
-						break;
-				}
-				i += 1;
-			} else {
-				resultLineText += text[i];
-			}
-		}
-		return resultLineText;
-	}
-
-	const getSelectedText = (selection: Selection, doc: TextDocument) => {
-		const startPosition: Position = selection.start;
-		const endPosition: Position = selection.end;
-
-		return doc.getText(new Range(startPosition, endPosition));
-	};
-
-	const setQuotesVScommand = vscode.commands.registerCommand('extension.screenQuotes', () => {
-		const textEditor = vscode.window.activeTextEditor;
-
-		if (textEditor) {
-			const selections: Selection[] = textEditor.selections;
-			const doc: TextDocument = textEditor.document;
-
-			textEditor.edit((edit: TextEditorEdit) => {
-				selections.forEach((selection: Selection) => {
-					const selectedText = getSelectedText(selection, doc);
-					const resultText = getQuotedText(selectedText);
-
-					edit.replace(selection, resultText);
-				})
-			});
-		}
-
-	});
-
-	const setUnquoteVScommand = vscode.commands.registerCommand('extension.screenUnquotes', () => {
+	context.subscriptions.push(vscode.commands.registerCommand(Commands.EscapeQuotes, () => {
 		const textEditor = vscode.window.activeTextEditor;
 
 		if (textEditor) {
 			const selections: vscode.Selection[] = textEditor.selections;
 			const doc: vscode.TextDocument = textEditor.document;
 
-			textEditor.edit((edit: TextEditorEdit) => {
-				selections.forEach((selection: Selection) => {
-					const selectedText = getSelectedText(selection, doc);
-					const resultText = getUnquotedText(selectedText);
+			textEditor.edit((edit: vscode.TextEditorEdit) => {
+				selections.forEach((selection: vscode.Selection) => {
+					const selectedText = doc.getText(selection);
+					const resultText = escapeSimpleQuotes(selectedText);
 
 					edit.replace(selection, resultText);
-				})
+				});
 			});
 		}
 
-	});
+	}), vscode.commands.registerCommand(Commands.UnescapeQuotes, () => {
+		const textEditor = vscode.window.activeTextEditor;
 
-	context.subscriptions.push(setQuotesVScommand);
-	context.subscriptions.push(setUnquoteVScommand);
+		if (textEditor) {
+			const selections: vscode.Selection[] = textEditor.selections;
+			const doc: vscode.TextDocument = textEditor.document;
+
+			textEditor.edit((edit: vscode.TextEditorEdit) => {
+				selections.forEach((selection: vscode.Selection) => {
+					const selectedText = doc.getText(selection);
+					const resultText = unescapeSimpleQuotes(selectedText);
+
+					edit.replace(selection, resultText);
+				});
+			});
+		}
+
+	}));
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() { }
