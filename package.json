@@ -1,5 +1,5 @@
 {
-	"name": "vscode-quotes-escaper",
+	"name": "escape-quotes",
 	"publisher": "milovidov",
 	"displayName": "Escape-quotes",
 	"description": "The extension allows you to escape quotes on the selected line.",
